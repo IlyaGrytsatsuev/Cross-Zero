@@ -8,9 +8,11 @@ import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientThread extends Thread{
-    private Socket ClientSocket ;
+    private Socket YourClientSocket ;
+    private Socket OpponentClientSocket ;
     private DataInputStream in;
-    private DataOutputStream out;
+    private DataOutputStream YourOut;
+    private DataOutputStream OpponentOut;
     private Board board;
     private char symbol;
     private String inMessage;
@@ -19,14 +21,16 @@ public class ClientThread extends Thread{
     private CopyOnWriteArrayList<String> users;
     private String name;
 
-    public ClientThread(Socket socket, Board board_, CopyOnWriteArrayList<String> moves_, CopyOnWriteArrayList<String> users_, String name_) throws IOException {
-        ClientSocket = socket;
+    public ClientThread(Socket socket1, Socket socket2, Board board_, CopyOnWriteArrayList<String> moves_, CopyOnWriteArrayList<String> users_, String name_) throws IOException {
+        YourClientSocket = socket1;
+        OpponentClientSocket = socket2;
         board = board_;
         moves = moves_;
         users = users_;
         name = name_;
-        in = new DataInputStream(ClientSocket.getInputStream());
-        out = new DataOutputStream(ClientSocket.getOutputStream());
+        in = new DataInputStream(YourClientSocket.getInputStream());
+        YourOut = new DataOutputStream(YourClientSocket.getOutputStream());
+        OpponentOut = new DataOutputStream(OpponentClientSocket.getOutputStream());
 
     }
 
@@ -38,13 +42,13 @@ public class ClientThread extends Thread{
                 symbol = 'O';
 
             users.add(name);
-            out.writeUTF("@symbol " + symbol);
+            YourOut.writeUTF("@symbol " + symbol);
 
             while(true){
                 if(users.size() == 2)
                     break;
             }
-            out.writeUTF("@start");
+            YourOut.writeUTF("@start");
 
 
             while(true){
@@ -58,27 +62,23 @@ public class ClientThread extends Thread{
                    boolean res = board.move(x, y, symbol);
                    if(res) {
                        moves.add(tmp);
-                       out.writeUTF("@MoveSuccess");
+                       YourOut.writeUTF("@MoveSuccess");
+                       String s = moves.get(moves.size()-1);
+                       OpponentOut.writeUTF("@OpponentMove " + s);
                    }
                    else
-                       out.writeUTF("@MoveFail");
+                       YourOut.writeUTF("@MoveFail");
 
                }
 
                if(inMessage.equals("@isWin")){
                    int r = board.isWin();
-                   out.writeUTF("@isWin " + String.valueOf(r));
+                   YourOut.writeUTF("@isWin " + String.valueOf(r));
                    if(r == 1 || r == 2){
-                       ClientSocket.close();
+                       YourClientSocket.close();
                        break;
                    }
                }
-
-                if(inMessage.equals("@getOpponentMove")){
-                    String tmp = moves.get(moves.size()-1);
-                    out.writeUTF("@OpponentMove " + tmp);
-                }
-
 
             }
 

@@ -24,8 +24,8 @@ public class ServerManager {
         FirstPlayerSocket = serverSocket.accept();
         SecondPlayerSocket = serverSocket.accept();
         board = new Board();
-        ClientThread firstClientThread = new ClientThread(FirstPlayerSocket, board, moves, users, "first");
-        ClientThread secondClientThread = new ClientThread(SecondPlayerSocket, board, moves, users, "second");
+        ClientThread firstClientThread = new ClientThread(FirstPlayerSocket, SecondPlayerSocket, board, moves, users, "first");
+        ClientThread secondClientThread = new ClientThread(SecondPlayerSocket, FirstPlayerSocket, board, moves, users, "second");
         firstClientThread.start();
         secondClientThread.start();
 

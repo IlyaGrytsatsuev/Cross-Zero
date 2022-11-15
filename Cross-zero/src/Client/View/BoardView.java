@@ -50,6 +50,7 @@ public class BoardView {
                 System.out.print("[" + board[i][j] + "] ");
             }
         }
+        System.out.print("\n");
     }
 
     public synchronized void setBoard(int x, int y, char s){

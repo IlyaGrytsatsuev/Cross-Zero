@@ -20,9 +20,12 @@ public class NetworkManager {
     }
 
     public void start() throws IOException {
-        ClientSendThread sendThread = new ClientSendThread(ClientSocket, view);
-        ClientReceiveThread receiveThread = new ClientReceiveThread(ClientSocket, view);
-        sendThread.start();
-        receiveThread.start();
+       // ClientSendThread sendThread = new ClientSendThread(ClientSocket, view);
+        //ClientReceiveThread receiveThread = new ClientReceiveThread(ClientSocket, view);
+       // sendThread.start();
+       // receiveThread.start();
+
+        ReceiveAndSendThread thread = new ReceiveAndSendThread(ClientSocket, view);
+        thread.start();
     }
 }
