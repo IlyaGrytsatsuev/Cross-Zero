@@ -85,9 +85,9 @@ public class Board {
             }
         }
 
-        if (r && board[x][0] == 'x')
+        if (r && board[x][0] == 'X')
             return X_WIN;
-        if (r && board[x][0] == 'o')
+        if (r && board[x][0] == 'O')
             return O_WIN;
 
         return CONTINUE;
@@ -102,9 +102,9 @@ public class Board {
             }
         }
 
-        if (r && board[0][y] == 'x')
+        if (r && board[0][y] == 'X')
             return X_WIN;
-        if (r && board[0][y] == 'o')
+        if (r && board[0][y] == 'O')
             return O_WIN;
 
         return CONTINUE;
@@ -130,13 +130,33 @@ public class Board {
             k++;
         }
 
-        if (d1 && board[4][4] == 'x')
+        if ((d1 && board[0][0] == 'X') || (d2 && board[9][0] == 'X'))
             return X_WIN;
 
-        if (d2 && board[4][4] == 'o')
+
+        if ((d1 && board[0][0] == 'O') || (d2 && board[9][0] == 'O'))
             return O_WIN;
 
         return CONTINUE;
+    }
+
+    public void printBoard(){
+        for (int i = 0; i < 10; i++) {
+            System.out.print("\n");
+            if(i == 0){
+                System.out.print("    ");
+                for(int k = 0; k < 10; k++)
+                    System.out.print(k + "   ");
+                System.out.print("\n");
+            }
+            System.out.print(i + " ");
+            System.out.print(" ");
+
+            for (int j = 0; j < 10; j++) {
+                System.out.print("[" + board[i][j] + "] ");
+            }
+        }
+        System.out.print("\n");
     }
 
 

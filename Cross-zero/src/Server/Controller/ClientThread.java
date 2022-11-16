@@ -54,19 +54,29 @@ public class ClientThread extends Thread{
             while(true){
                inMessage = in.readUTF();
 
-               if(inMessage.startsWith("@move")){
-                   String tmp = inMessage.substring(6);
-                   String [] coordinates = tmp.split(" ");
-                   int x = Integer.parseInt(coordinates[0]);
-                   int y = Integer.parseInt(coordinates[1]);
-                   boolean res = board.move(x, y, symbol);
-                   if(res) {
+                if(!(inMessage.startsWith("@move") || inMessage.equals("@isWin"))){
+                    YourOut.writeUTF("@WrongCommand");
+                }
+
+
+                if(inMessage.startsWith("@move")){
+                    if(inMessage.length() != 9){
+                        YourOut.writeUTF("@WrongCommand");
+                        continue;
+                    }
+                    String tmp = inMessage.substring(6);
+                    String [] coordinates = tmp.split(" ");
+                    int x = Integer.parseInt(coordinates[0]);
+                    int y = Integer.parseInt(coordinates[1]);
+                    boolean res = board.move(x, y, symbol);
+                    if(res) {
                        moves.add(tmp);
                        YourOut.writeUTF("@MoveSuccess");
                        String s = moves.get(moves.size()-1);
                        OpponentOut.writeUTF("@OpponentMove " + s);
-                   }
-                   else
+                       board.printBoard();
+                    }
+                    else
                        YourOut.writeUTF("@MoveFail");
 
                }
@@ -86,6 +96,7 @@ public class ClientThread extends Thread{
         catch(Exception e){
             e.printStackTrace();
         }
+
     }
 
 

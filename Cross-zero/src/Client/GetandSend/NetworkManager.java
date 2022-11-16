@@ -28,4 +28,5 @@ public class NetworkManager {
         ReceiveAndSendThread thread = new ReceiveAndSendThread(ClientSocket, view);
         thread.start();
     }
+
 }

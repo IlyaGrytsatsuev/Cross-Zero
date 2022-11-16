@@ -2,10 +2,9 @@ package Client.GetandSend;
 
 import Client.View.BoardView;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class ReceiveAndSendThread extends Thread{
@@ -13,7 +12,7 @@ public class ReceiveAndSendThread extends Thread{
     private Socket ClientSocket;
     private DataInputStream in;
     private String inMessage;
-    private char symbol;
+    private char symbol ;
     private char OpponentSymbol;
 
     private BoardView view;
@@ -39,8 +38,18 @@ public class ReceiveAndSendThread extends Thread{
 
     public void run(){
         try{
+            System.out.println("Wait for opponent connection ...");
             getSymbol();
             getGameState();
+
+            int i = 0;
+            int j = 0;
+
+
+            if(symbol == 'X')
+                j = 0;
+            else
+                j = 1;
 
             while(true){
 
@@ -50,6 +59,10 @@ public class ReceiveAndSendThread extends Thread{
                 }
 
                 if(isMyTurn) {
+                  //  setInput("@move " + i + " " + j);
+                    i++;
+                    j++;
+                  //  Thread.sleep(500);
                     sendMove();
                 }
                 else if(!isMyTurn)
@@ -75,6 +88,11 @@ public class ReceiveAndSendThread extends Thread{
         sendMessage = readFromKeyboard();
         out.writeUTF(sendMessage);
         inMessage = in.readUTF();
+
+        if(inMessage.equals("@WrongCommand")) {
+            System.out.println("The command is wrong! Enter again !");
+            //return false;
+        }
 
         if(inMessage.equals("@MoveSuccess")){
             String tmp = sendMessage.substring(6);
@@ -139,6 +157,8 @@ public class ReceiveAndSendThread extends Thread{
                     System.out.println("You won !");
                 else
                     System.out.println("You lost !");
+
+                gameEnd = true;
             }
 
             if(r == O_WIN){
@@ -146,10 +166,16 @@ public class ReceiveAndSendThread extends Thread{
                     System.out.println("You won !");
                 else
                     System.out.println("You lost !");
+
+                gameEnd = true;
+
             }
 
-            if(r == DRAW)
+            if(r == DRAW) {
                 System.out.println("The board is full !");
+                gameEnd = true;
+
+            }
 
             if(r == CONTINUE)
                 System.out.println("Enter your move !");
@@ -198,6 +224,12 @@ public class ReceiveAndSendThread extends Thread{
             else
                 System.out.println("Wait for opponents move !");
         }
+
+    }
+
+    public void setInput(String str){
+        ByteArrayInputStream s = new ByteArrayInputStream(str.getBytes());
+        System.setIn(s);
 
     }
 }
