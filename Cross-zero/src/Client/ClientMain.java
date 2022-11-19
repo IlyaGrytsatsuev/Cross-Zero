@@ -1,5 +1,5 @@
 package Client;
-import Client.GetandSend.*;
+import Client.Controller.*;
 
 public class ClientMain {
     public static void main(String[] args){
